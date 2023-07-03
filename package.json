@@ -1,0 +1,24 @@
+{
+  "name": "restapi-spike",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server/app.js",
+    "dev:client": "cd client/vite-react && npm run dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@faker-js/faker": "^8.0.2",
+    "@types/node": "^18.0.0",
+    "@types/uuid": "^9.0.2",
+    "uuid": "^9.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}
