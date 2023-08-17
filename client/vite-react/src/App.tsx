@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import './App.css';
 import {
   DataGrid, Column, Scrolling
 } from 'devextreme-react/data-grid';
 
 import CustomStore from 'devextreme/data/custom_store';
-// import { formatDate } from 'devextreme/localization';
 import { UserStatsRow, ReactionStats } from './types';
 import { User, Post, Reaction, ReactionType } from './../../../types';
 
@@ -59,10 +58,22 @@ const prepareDataSource = async () => {
 };
 
 export default function App() {
-  const [userStatsData] = useState(new CustomStore<UserStatsRow, string>({
+  const [dataLoadDuration, setDataLoadDuration] = useState<number | undefined>(void 0);
+  const [dataSourceLength, setDataSourceLength] = useState<number | undefined>(void 0);
+
+  const userStatsData = useMemo(() => new CustomStore<UserStatsRow, string>({
     key: 'userId',
-    load: () => prepareDataSource(),
-  }));
+    load: async () => {
+      const dataLoadStarted = Date.now();
+
+      const dataSource = await prepareDataSource();
+
+      setDataLoadDuration(Date.now() - dataLoadStarted);
+      setDataSourceLength(dataSource.length);
+
+      return dataSource;
+    }
+  }), [setDataLoadDuration, setDataSourceLength]);
 
   return (
     <React.Fragment>
@@ -85,6 +96,12 @@ export default function App() {
         <Column dataField="favoriteReaction" dataType="string">
         </Column>
       </DataGrid>
+      { dataLoadDuration &&
+        <div>
+          <h2>REST API</h2>
+          <div>{`${dataSourceLength} rows loaded in ${dataLoadDuration} milliseconds`}</div>
+        </div>
+      }
     </React.Fragment>
   );
 }
