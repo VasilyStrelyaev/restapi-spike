@@ -7,6 +7,28 @@ const reactions = require('../data/reactions.json');
 const app = express();
 const PORT = 3005;
 
+const reactionsByUser = reactions.reduce((hash, reaction) => {
+    const userReactions = hash[reaction.AuthorID];
+
+    if (userReactions)
+        userReactions.push(reaction);
+    else
+        hash[reaction.AuthorID] = [reaction];
+
+    return hash;
+}, {});
+
+const postsByUser = posts.reduce((hash, post) => {
+    const userPosts = hash[post.AuthorID];
+
+    if (userPosts)
+        userPosts.push(post);
+    else
+        hash[post.AuthorID] = [post];
+
+    return hash;
+}, {});
+
 app.use(cors());
 
 app.use('/users', (req, res)=> {
@@ -14,11 +36,11 @@ app.use('/users', (req, res)=> {
 });
 
 app.use('/user/:userId/posts', (req, res)=> {
-    res.json(posts.filter(post => post.AuthorID === req.params.userId));
+    res.json(postsByUser[req.params.userId]);
 });
 
 app.use('/user/:userId/reactions', (req, res)=> {
-    res.json(reactions.filter(reaction => reaction.AuthorID === req.params.userId));
+    res.json(reactionsByUser[req.params.userId]);
 });
 
 app.listen(PORT, err => {
