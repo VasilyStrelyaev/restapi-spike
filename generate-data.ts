@@ -2,7 +2,31 @@ import { faker }  from '@faker-js/faker';
 import { v4 as uuid } from 'uuid';
 import fs from 'fs';
 import path from 'path';
-import { User, Post, Reaction, ReactionType } from './types'
+
+type ReactionType = 'smile' | 'heart' | 'fire' | 'crying';
+
+type User = {
+  ID: string;
+  PublicName: string;
+  Bio: string;
+  PublicLocation: string;
+  AvatarURL: string;
+}
+
+type Post = {
+  ID: string;
+  AuthorID: string;
+  PostedAt: string;
+  Content: string;
+}
+
+type Reaction = {
+  ID: string;
+  AuthorID: string;
+  PostID: string;
+  LeftAt: string;
+  ReactionType: ReactionType;
+}
 
 type GenerateUserFn = () => User;
 type GenerateReactionFn = (post: Post, userIDs: string[]) => Reaction;

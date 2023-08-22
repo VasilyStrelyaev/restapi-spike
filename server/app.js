@@ -1,46 +1,46 @@
 const express = require('express');
 const cors  = require('cors');
-const users = require('../data/users.json');
-const posts = require('../data/posts.json');
-const reactions = require('../data/reactions.json');
+const contacts = require('../data/contacts.json');
+const tasks = require('../data/tasks.json');
+const messages = require('../data/messages.json');
 
 const app = express();
 const PORT = 3005;
 
-const reactionsByUser = reactions.reduce((hash, reaction) => {
-    const userReactions = hash[reaction.AuthorID];
+const messagesByUser = messages.reduce((hash, message) => {
+    const userMessages = hash[message.contactId];
 
-    if (userReactions)
-        userReactions.push(reaction);
+    if (userMessages)
+        userMessages.push(message);
     else
-        hash[reaction.AuthorID] = [reaction];
+        hash[message.contactId] = [message];
 
     return hash;
 }, {});
 
-const postsByUser = posts.reduce((hash, post) => {
-    const userPosts = hash[post.AuthorID];
+const tasksByUser = tasks.reduce((hash, task) => {
+    const userTasks = hash[task.contactId];
 
-    if (userPosts)
-        userPosts.push(post);
+    if (userTasks)
+        userTasks.push(task);
     else
-        hash[post.AuthorID] = [post];
+        hash[task.contactId] = [task];
 
     return hash;
 }, {});
 
 app.use(cors());
 
-app.use('/users', (req, res)=> {
-    res.json(users);
+app.use('/contacts', (req, res)=> {
+    res.json(contacts);
 });
 
-app.use('/user/:userId/posts', (req, res)=> {
-    res.json(postsByUser[req.params.userId]);
+app.use('/contact/:contactId/tasks', (req, res)=> {
+    res.json(tasksByUser[req.params.contactId] || []);
 });
 
-app.use('/user/:userId/reactions', (req, res)=> {
-    res.json(reactionsByUser[req.params.userId]);
+app.use('/contact/:contactId/messages', (req, res)=> {
+    res.json(messagesByUser[req.params.contactId] || []);
 });
 
 app.listen(PORT, err => {
